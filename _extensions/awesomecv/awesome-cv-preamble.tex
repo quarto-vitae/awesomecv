@@ -1,0 +1,206 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+% Awesome CV LaTeX Template for CV/Resume
+%
+% This template has been downloaded from:
+% https://github.com/posquit0/Awesome-CV
+%
+% Author:
+% Claud D. Park <posquit0.bj@gmail.com>
+% http://www.posquit0.com
+%
+%
+% Adapted to be a Quarto template by Mitchell O'Hara-Wild
+%
+% Template license:
+% CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
+%
+% Everything a CV and a cover letter have in common: class options, colours,
+% the personal information that fills the header, and Pandoc's own preamble.
+% Shared by awesome-cv.tex and awesome-cv-letter.tex, which differ only in what
+% they do between \begin{document} and \end{document}.
+%-------------------------------------------------------------------------------
+% CONFIGURATIONS
+%-------------------------------------------------------------------------------
+$passoptions.latex()$
+%
+% A4 paper size by default, use 'letterpaper' for US letter
+$doc-class.tex()$
+
+% Configure page margins with geometry. The class has already loaded the
+% package, so these are set with \geometry rather than as package options.
+$if(geometry)$
+\geometry{$for(geometry)$$geometry$$sep$,$endfor$}
+$else$
+\geometry{left=1.4cm, top=.8cm, right=1.4cm, bottom=1.8cm, footskip=.5cm}
+$endif$
+
+% Color for highlights
+% Awesome Colors: awesome-emerald, awesome-skyblue, awesome-red, awesome-pink, awesome-orange
+%                 awesome-nephritis, awesome-concrete, awesome-darknight
+$if(headcolor)$
+\definecolor{awesome}{HTML}{$headcolor$}
+$else$
+\colorlet{awesome}{awesome-red}
+$endif$
+
+% Colors for text
+% Uncomment if you would like to specify your own color
+% \definecolor{darktext}{HTML}{414141}
+% \definecolor{text}{HTML}{333333}
+% \definecolor{graytext}{HTML}{5D5D5D}
+% \definecolor{lighttext}{HTML}{999999}
+
+% Set false if you don't want to highlight section with awesome color
+\setbool{acvSectionColorHighlight}{true}
+
+%-------------------------------------------------------------------------------
+%	PERSONAL INFORMATION
+%	Comment any of the lines below if they are not required
+%-------------------------------------------------------------------------------
+% Available options: circle|rectangle,edge/noedge,left/right
+$if(profilepic)$
+\photo$if(profilepic-options)$[$for(profilepic-options)$$profilepic-options$$sep$,$endfor$]$endif${$profilepic$}
+$endif$
+\name{$name$}{$if(surname)$$surname$$endif$}
+
+$if(position)$
+\position{$position$}
+$endif$
+$if(address)$
+\address{$address$}
+$endif$
+
+$if(pronouns)$
+\pronouns{$pronouns$}
+$endif$
+$if(phone)$
+\mobile{$phone$}
+$endif$
+$if(email)$
+\email{$email$}
+$endif$
+$if(www)$
+\homepage{$www$}
+$endif$
+$if(dateofbirth)$
+\dateofbirth{$dateofbirth$}
+$endif$
+$if(orcid)$
+\orcid{$orcid$}
+$endif$
+$if(publons)$
+\publons{$publons$}
+$endif$
+$-- \googlescholar takes the profile id and the name to display beside it.
+$-- An empty second argument makes the class fall back to the author's name.
+$if(googlescholar)$
+\googlescholar{$googlescholar$}{$if(googlescholar-name)$$googlescholar-name$$endif$}
+$endif$
+$if(researchgate)$
+\researchgate{$researchgate$}
+$endif$
+$if(github)$
+\github{$github$}
+$endif$
+$if(gitlab)$
+\gitlab{$gitlab$}
+$endif$
+$if(bitbucket)$
+\bitbucket{$bitbucket$}
+$endif$
+$if(stackoverflow)$
+\stackoverflow{$stackoverflow.id$}{$stackoverflow.name$}
+$endif$
+$if(linkedin)$
+\linkedin{$linkedin$}
+$endif$
+$if(twitter)$
+\twitter{$twitter$}
+$endif$
+$if(x)$
+\x{$x$}
+$endif$
+$-- \mastodon takes the instance host and the handle separately, so this is
+$-- given as `mastodon: {instance: fosstodon.org, name: user}`.
+$if(mastodon)$
+\mastodon{$mastodon.instance$}{$mastodon.name$}
+$endif$
+$if(skype)$
+\skype{$skype$}
+$endif$
+$if(reddit)$
+\reddit{$reddit$}
+$endif$
+$if(xing)$
+\xing{$xing$}
+$endif$
+$if(medium)$
+\medium{$medium$}
+$endif$
+$if(kaggle)$
+\kaggle{$kaggle$}
+$endif$
+$if(hackerrank)$
+\hackerrank{$hackerrank$}
+$endif$
+$if(telegram)$
+\telegram{$telegram$}
+$endif$
+$if(whatsapp)$
+\whatsapp{$whatsapp$}
+$endif$
+$if(extrainfo)$
+\extrainfo{$extrainfo$}
+$endif$
+
+$if(aboutme)$
+\quote{$aboutme$}
+$endif$
+
+%-------------------------------------------------------------------------------
+%	PANDOC SUPPORT
+%-------------------------------------------------------------------------------
+% common.latex is required in every custom Quarto LaTeX template, and calls
+% pandoc.tex, which in turn brings in syntax highlighting, tables.tex,
+% graphics.tex, citations.tex, babel-lang.tex, tightlist.tex, biblio-config.tex
+% and header-includes. Do not hand-copy any of those: they are Pandoc's to
+% maintain, and a stale local copy silently drifts out of step with the reader.
+$common.latex()$
+$after-header-includes.latex()$
+$hypersetup.latex()$
+
+% Typography. font-settings.latex honours mainfont/sansfont/monofont and their
+% *options and *fallback variants, so a user changes the CV's fonts the same way
+% they would in any other Quarto pdf. fonts.latex is NOT called: it would load
+% lmodern and unicode-math over the top of what the class has already set up.
+$font-settings.latex()$
+
+% The class does not read \rmfamily directly -- every style command goes through
+% \bodyfont, \headerfont or \footerfont, which resolve to \sffamily -- so
+% \setmainfont above has no effect until those are pointed at it. Awesome-CV's
+% own defaults (Source Sans 3 for the body, Roboto for the header) stand
+% untouched when nothing is specified. The light faces fall back to the regular
+% weight, as an arbitrary mainfont is not guaranteed to have a {l} face.
+$if(mainfont)$
+\renewcommand*{\bodyfont}{\rmfamily}
+\renewcommand*{\bodyfontlight}{\rmfamily}
+\renewcommand*{\footerfont}{\rmfamily}
+$endif$
+$if(headerfont)$
+% \setfontfamily redefines the family the class declared with \newfontfamily.
+% \headerfont/\headerfontlight wrap \roboto, so overriding the family they wrap
+% carries through to both. The name given here resolves against installed
+% system fonts, rather than the class default of Roboto from the texmf tree.
+\setfontfamily\roboto[$for(headerfontoptions)$$headerfontoptions$$sep$,$endfor$]{$headerfont$}
+% \headerfontlight asks for the {l} face, which an arbitrary system font may not
+% have; drop back to the upright face so the name does not silently vanish.
+\renewcommand*{\headerfontlight}{\roboto\selectfont}
+$endif$
+
+% Four further partials are deliberately not called here:
+%   fonts.latex  see above.
+%   before-title.tex, title.tex, before-body.tex, toc.tex  neither a CV nor a
+%     cover letter has a title block or contents page; \makecvheader plays that
+%     role, and the class's \section does not write \addcontentsline, so a toc
+%     would be empty.

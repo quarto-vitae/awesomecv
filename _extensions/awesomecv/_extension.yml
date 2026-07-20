@@ -9,6 +9,12 @@ contributes:
       # line of each of its examples specify xelatex, so this follows them.
       pdf-engine: xelatex
       template: awesome-cv.tex
+      # The preamble (class options, colours, personal information, Pandoc's own
+      # setup) and the header/footer are shared verbatim with the cover letter
+      # format below, and live in partials so the two cannot drift apart.
+      template-partials:
+        - awesome-cv-preamble.tex
+        - awesome-cv-titling.tex
       documentclass: awesome-cv
       papersize: a4
       fontsize: 11pt
@@ -16,7 +22,9 @@ contributes:
       # class's `hidelinks` and print the header socials in blue. Awesome-CV
       # styles links by icon, not colour. Users can still opt back in.
       colorlinks: false
-      # Copied next to the generated .tex so LaTeX can find them. The entries/
+      # Shown in the centre of the footer, when show_footer is set.
+      docname: Curriculum Vitae
+      # Copied next to the generated .tex so LaTeX can find it. The entries/
       # directory is deliberately absent: resources are copied after pandoc
       # runs, so a handler listed here would resolve only on a second render.
       # The filter reads _extensions/**/entries/ directly.
@@ -38,5 +46,52 @@ contributes:
         - at: post-quarto
           path: awesome-cv.lua
       # Style names this template implements, for the filter's fallback warning.
+      vitae:
+        styles: [detailed, brief, skills]
+
+    # A cover letter to accompany the CV, using Awesome-CV's `cvletter`
+    # environment: the same header, footer and personal information, with the
+    # body set between \makelettertitle and \makeletterclosing.
+    #
+    # Written `pdf+letter`, and used as `format: awesomecv-pdf+letter`, because
+    # the obvious `awesomecv-letter-pdf` cannot work: Quarto splits a format
+    # string at its last hyphen and reads the head as the extension id, so that
+    # would go looking for an extension named `awesomecv-letter`. A `+suffix`
+    # is instead kept as a modifier on the base format, and the extension's
+    # formats are searched for `pdf+letter` before falling back to `pdf` --
+    # which is what lets one extension contribute two pdf formats.
+    #
+    # The cost is that the modifier is appended to the output stem, so a letter
+    # renders to `<name>+letter.pdf` unless the document sets `output-file`.
+    pdf+letter:
+      pdf-engine: xelatex
+      template: awesome-cv-letter.tex
+      # The preamble (class options, colours, personal information, Pandoc's own
+      # setup) and the header/footer are shared verbatim with the CV format
+      # above, and live in partials so the two cannot drift apart.
+      template-partials:
+        - awesome-cv-preamble.tex
+        - awesome-cv-titling.tex
+      documentclass: awesome-cv
+      papersize: a4
+      fontsize: 11pt
+      # As above: Awesome-CV marks links with icons rather than colour.
+      colorlinks: false
+      # Shown in the centre of the footer, when show_footer is set.
+      docname: Cover Letter
+      # Read by awesome-cv.lua, which sends headings to \lettersection rather
+      # than \cvsection when this is set.
+      awesomecv-letter: true
+      # Repeated rather than shared: format-resources is per-format, and each
+      # format renders into its own directory.
+      format-resources:
+        - awesome-cv.cls
+      df-print: kable
+      filters:
+        # Kept, so a letter may still carry a listing -- a table of selection
+        # criteria, say -- in the same syntax as the CV.
+        - curriculum
+        - at: post-quarto
+          path: awesome-cv.lua
       vitae:
         styles: [detailed, brief, skills]

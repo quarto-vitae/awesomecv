@@ -1,0 +1,16 @@
+% The header and footer, identical for a CV and a cover letter. Called just
+% inside \begin{document} by both templates.
+%
+% Print the header with the personal information set in the preamble.
+% Give optional argument to change alignment(C: center, L: left, R: right)
+\makecvheader$if(header-align)$[$header-align$]$endif$
+
+% Print the footer with 3 arguments(<left>, <center>, <right>)
+% Leave any of these blank if they are not needed
+% 2019-02-14 Chris Umphlett - add flexibility to the document name in footer, rather than have it be static Curriculum Vitae
+$if(show_footer)$
+\makecvfooter
+  {$date$}
+    {$name$$if(surname)$ $surname$$endif$~~~·~~~$docname$}
+  {\thepage$if(page_total)$~ of \pageref{LastPage}~$endif$}
+$endif$

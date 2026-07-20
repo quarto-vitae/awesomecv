@@ -1,0 +1,74 @@
+$awesome-cv-preamble.tex()$
+
+%-------------------------------------------------------------------------------
+%	COVER LETTER INFORMATION
+%-------------------------------------------------------------------------------
+$-- The class prints \@recipientname, \@recipientaddress, \@letteropening and
+$-- \@letterclosing unconditionally, so each is defined even when the document
+$-- leaves it out; only the title and the enclosure are guarded by the class
+$-- itself, and so are the only two emitted conditionally here.
+$-- recipient-address is looped over rather than interpolated, so that a list of
+$-- lines in the YAML comes out as the lines of an address.
+$-- It falls back to \mbox{} rather than to nothing: the class ends the address
+$-- with \\, and an empty address would leave that with no line to end, failing
+$-- the render outright for a letter that simply names no recipient.
+\recipient
+  {$if(recipient-name)$$recipient-name$$endif$}
+  {$if(recipient-address)$$for(recipient-address)$$recipient-address$$sep$ \\ $endfor$$else$\mbox{}$endif$}
+
+$if(letter-title)$
+\lettertitle{$letter-title$}
+$endif$
+\letterdate{$if(letter-date)$$letter-date$$else$$date$$endif$}
+\letteropening{$if(letter-opening)$$letter-opening$$endif$}
+\letterclosing{$if(letter-closing)$$letter-closing$$else$Sincerely,$endif$}
+$-- The label is always passed, even though it is optional to the class: the
+$-- class only defines \@letterenclname when it is given one, so omitting it
+$-- makes \makeletterclosing fail on an undefined control sequence. "Attached"
+$-- is the default the class itself names.
+$-- Several enclosures may be listed, and are printed on the one line.
+$if(letter-enclosure)$
+\letterenclosure[$if(letter-enclosure-name)$$letter-enclosure-name$$else$Attached$endif$]{$for(letter-enclosure)$$letter-enclosure$$sep$, $endfor$}
+$endif$
+
+\begin{document}
+
+$awesome-cv-titling.tex()$
+
+%-------------------------------------------------------------------------------
+%	COVER LETTER CONTENT
+%-------------------------------------------------------------------------------
+
+$if(linestretch)$
+\setstretch{$linestretch$}
+$endif$
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+\begin{cvletter}
+
+\makelettertitle
+
+$body$
+
+\makeletterclosing
+
+\end{cvletter}
+
+$before-bib.tex()$
+
+$if(nocite-ids)$
+\nocite{$for(nocite-ids)$$it$$sep$, $endfor$}
+$endif$
+$biblio.tex()$
+
+$for(include-after)$
+$include-after$
+$endfor$
+
+$after-body.tex()$
+
+$if(page_total)$\label{LastPage}~$endif$
+\end{document}

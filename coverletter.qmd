@@ -1,0 +1,39 @@
+---
+name: Marie
+surname: Curie
+position: "Physicist and Chemist"
+address: "Paris, France"
+email: "marie.curie@example.org"
+github: mcurie
+recipient-name: "Prof. Gabriel Lippmann"
+recipient-address:
+  - "Faculty of Sciences"
+  - "University of Paris"
+  - "Paris, France"
+letter-title: "Application for the chair of General Physics"
+letter-date: "12 April 1906"
+letter-opening: "Dear Professor Lippmann,"
+letter-closing: "Yours sincerely,"
+letter-enclosure: "Curriculum Vitae"
+format: awesomecv-pdf+letter
+# Without this the letter renders to `coverletter+letter.pdf`, as Quarto adds
+# the format's `+letter` modifier to the name of whatever it renders.
+output-file: coverletter.pdf
+---
+
+The letter's body is written as ordinary prose. Everything above the first
+paragraph — the recipient, the date, the title and the opening — is drawn from
+the YAML header, as is the closing that follows the last paragraph.
+
+I write to apply for the chair of General Physics. Having isolated polonium and
+radium at the EPCI, and directed the laboratory's work on radioactivity since
+1897, I would be glad to continue that work within the Faculty.
+
+# A heading becomes a letter section
+
+Headings are set as letter sections, which sit in running text rather than
+opening a page the way the CV's sections do. Lists, emphasis and links all work
+as they do anywhere else in Quarto:
+
+- Isolated polonium and radium
+- Two Nobel Prizes, in Physics and in Chemistry

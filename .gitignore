@@ -1,10 +1,12 @@
 /.quarto/
 *_files/
 
-# Rendered output of template.qmd. Delete these lines if you would like to
-# commit a rendered preview of the template.
+# Rendered output of template.qmd and coverletter.qmd. Delete these lines if
+# you would like to commit a rendered preview of the templates.
 /template.pdf
 /template.tex
+/coverletter.pdf
+/coverletter+letter.tex
 
 # `format-resources` copies the Awesome CV class file next to the rendered
 # document, which for this repository is the project root.
