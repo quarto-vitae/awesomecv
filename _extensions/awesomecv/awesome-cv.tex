@@ -31,9 +31,6 @@ $else$
 \geometry{left=1.4cm, top=.8cm, right=1.4cm, bottom=1.8cm, footskip=.5cm}
 $endif$
 
-% Specify the location of the included fonts
-\fontdir[fonts/]
-
 % Color for highlights
 % Awesome Colors: awesome-emerald, awesome-skyblue, awesome-red, awesome-pink, awesome-orange
 %                 awesome-nephritis, awesome-concrete, awesome-darknight
@@ -82,14 +79,19 @@ $endif$
 $if(www)$
 \homepage{$www$}
 $endif$
+$if(dateofbirth)$
+\dateofbirth{$dateofbirth$}
+$endif$
 $if(orcid)$
 \orcid{$orcid$}
 $endif$
 $if(publons)$
 \publons{$publons$}
 $endif$
+$-- \googlescholar takes the profile id and the name to display beside it.
+$-- An empty second argument makes the class fall back to the author's name.
 $if(googlescholar)$
-\googlescholar{$googlescholar$}
+\googlescholar{$googlescholar$}{$if(googlescholar-name)$$googlescholar-name$$endif$}
 $endif$
 $if(researchgate)$
 \researchgate{$researchgate$}
@@ -100,11 +102,25 @@ $endif$
 $if(gitlab)$
 \gitlab{$gitlab$}
 $endif$
+$if(bitbucket)$
+\bitbucket{$bitbucket$}
+$endif$
+$if(stackoverflow)$
+\stackoverflow{$stackoverflow.id$}{$stackoverflow.name$}
+$endif$
 $if(linkedin)$
 \linkedin{$linkedin$}
 $endif$
 $if(twitter)$
 \twitter{$twitter$}
+$endif$
+$if(x)$
+\x{$x$}
+$endif$
+$-- \mastodon takes the instance host and the handle separately, so this is
+$-- given as `mastodon: {instance: fosstodon.org, name: user}`.
+$if(mastodon)$
+\mastodon{$mastodon.instance$}{$mastodon.name$}
 $endif$
 $if(skype)$
 \skype{$skype$}
@@ -114,6 +130,21 @@ $if(reddit)$
 $endif$
 $if(xing)$
 \xing{$xing$}
+$endif$
+$if(medium)$
+\medium{$medium$}
+$endif$
+$if(kaggle)$
+\kaggle{$kaggle$}
+$endif$
+$if(hackerrank)$
+\hackerrank{$hackerrank$}
+$endif$
+$if(telegram)$
+\telegram{$telegram$}
+$endif$
+$if(whatsapp)$
+\whatsapp{$whatsapp$}
 $endif$
 $if(extrainfo)$
 \extrainfo{$extrainfo$}
@@ -142,25 +173,25 @@ $hypersetup.latex()$
 $font-settings.latex()$
 
 % The class does not read \rmfamily directly -- every style command goes through
-% \bodyfont, \headerfont or \footerfont -- so \setmainfont above has no effect
-% until those are pointed at it. Awesome-CV's own defaults (Source Sans Pro for
-% the body, Roboto for the header) stand untouched when nothing is specified.
+% \bodyfont, \headerfont or \footerfont, which resolve to \sffamily -- so
+% \setmainfont above has no effect until those are pointed at it. Awesome-CV's
+% own defaults (Source Sans 3 for the body, Roboto for the header) stand
+% untouched when nothing is specified. The light faces fall back to the regular
+% weight, as an arbitrary mainfont is not guaranteed to have a {l} face.
 $if(mainfont)$
 \renewcommand*{\bodyfont}{\rmfamily}
 \renewcommand*{\bodyfontlight}{\rmfamily}
 \renewcommand*{\footerfont}{\rmfamily}
-% sourcesanspro is loaded with [default], which makes it \familydefault. Text
-% that reaches the page outside one of the style commands above would otherwise
-% stay Source Sans while everything around it changed.
-\renewcommand*{\familydefault}{\rmdefault}
-\normalfont
 $endif$
 $if(headerfont)$
-% \setfontfamily redefines the family the class already declared with
-% \newfontfamily. Without Path=, this resolves against installed system fonts
-% rather than the bundled fonts/ directory.
-\setfontfamily\headerfont[$for(headerfontoptions)$$headerfontoptions$$sep$,$endfor$]{$headerfont$}
-\setfontfamily\headerfontlight[$for(headerfontoptions)$$headerfontoptions$$sep$,$endfor$]{$headerfont$}
+% \setfontfamily redefines the family the class declared with \newfontfamily.
+% \headerfont/\headerfontlight wrap \roboto, so overriding the family they wrap
+% carries through to both. The name given here resolves against installed
+% system fonts, rather than the class default of Roboto from the texmf tree.
+\setfontfamily\roboto[$for(headerfontoptions)$$headerfontoptions$$sep$,$endfor$]{$headerfont$}
+% \headerfontlight asks for the {l} face, which an arbitrary system font may not
+% have; drop back to the upright face so the name does not silently vanish.
+\renewcommand*{\headerfontlight}{\roboto\selectfont}
 $endif$
 
 % Four further partials are deliberately not called here:

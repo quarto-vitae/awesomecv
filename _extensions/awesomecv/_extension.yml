@@ -5,13 +5,11 @@ quarto-required: ">=1.7.0"
 contributes:
   formats:
     pdf:
-      # Awesome CV needs xelatex for \fontdir / fontspec.
+      # fontspec needs a Unicode engine. Upstream's README and the TS-program
+      # line of each of its examples specify xelatex, so this follows them.
       pdf-engine: xelatex
       template: awesome-cv.tex
-      # Read by Quarto's doc-class.tex partial, which the template calls to
-      # build \documentclass. Overrides the pdf format's scrartcl default.
       documentclass: awesome-cv
-      # doc-class.tex writes "$papersize$paper", so this is "a4", not "a4paper".
       papersize: a4
       fontsize: 11pt
       # Quarto's pdf format defaults this to true, which would override the
@@ -25,10 +23,7 @@ contributes:
       format-resources:
         - awesome-cv.cls
         - fonts
-      # Lets a knitr cell print a data frame directly and still yield a table.
-      # Format-level only: as a cell option it is silently ignored, so the
-      # format has to opt in on the author's behalf. knitr only -- the jupyter
-      # engine does not consult it.
+      # Default knitr engine printing data directly as a markdown table.
       df-print: kable
       # Provided by the embedded copy of quarto-vitae/curriculum, under
       # _extensions/quarto-vitae/curriculum. Filters are matched by the
@@ -39,6 +34,10 @@ contributes:
       #   quarto update quarto-vitae/curriculum --embed awesomecv
       filters:
         - curriculum
+        # Maps `#` and `##` onto the class's \cvsection / \cvsubsection, so
+        # awesome-cv.cls can stay a near-verbatim copy of upstream.
+        - at: post-quarto
+          path: awesome-cv.lua
       # Style names this template implements, for the filter's fallback warning.
       vitae:
         styles: [detailed, brief, skills]

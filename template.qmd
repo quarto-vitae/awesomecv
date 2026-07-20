@@ -64,12 +64,14 @@ elaboration.
 # Service
 
 Markdown inside cells is preserved, and LaTeX special characters are escaped
-for you, so **bold** text and a literal 100% both come out right.
+for you, so *emphasis* and a literal 100% both come out right. The `brief`
+style already sets each entry in bold, so emphasis reads more clearly here
+than `**bold**` would.
 
 ::: {.entries style="brief"}
 | what                                 | where    | when |
 |--------------------------------------|----------|------|
-| Member, **Solvay Council**           | Brussels | 1911 |
+| Member, *Solvay Council*             | Brussels | 1911 |
 | Director, Red Cross Radiology (100%) | Paris    | 1914 |
 :::
 

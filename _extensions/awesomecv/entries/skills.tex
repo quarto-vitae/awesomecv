@@ -1,11 +1,7 @@
-$-- Awesome CV skill entries.
-$-- \cvskill{<type>}{<skillset>}
-$--
-$-- The skillset is a single right-hand cell, but authors naturally write it
-$-- either as one string or as a list. Accept both: prefer `with`, otherwise
-$-- join a list-valued `why` with commas.
 \begin{cvskills}
 $for(entries)$
-  \cvskill{$entries.what$}{$if(entries.with)$$entries.with$$else$$for(entries.why)$$entries.why$$sep$, $endfor$$endif$}
+  \cvskill
+    {$entries.what$} % what
+    {$if(entries.with)$$entries.with$$else$$for(entries.why)$$entries.why$$sep$, $endfor$$endif$} % with, or why
 $endfor$
 \end{cvskills}

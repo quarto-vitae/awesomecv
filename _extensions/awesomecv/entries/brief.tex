@@ -1,11 +1,9 @@
-$-- Awesome CV brief entries.
-$-- \cvhonor{<position>}{<title>}{<location>}{<date>}
-$--
-$-- The location column is a fixed 2.5cm right-aligned slot, so it suits short
-$-- values only. Prefer `where` when the data has it, falling back to `with` --
-$-- an example of the template-specific role handling the design allows.
 \begin{cvhonors}
 $for(entries)$
-  \cvhonor{}{$entries.what$}{$if(entries.where)$$entries.where$$else$$entries.with$$endif$}{$entries.when$}
+  \cvhonor
+    {$entries.what$} % what
+    {$entries.with$} % with
+    {$entries.where$} % where
+    {$entries.when$} % when
 $endfor$
 \end{cvhonors}
