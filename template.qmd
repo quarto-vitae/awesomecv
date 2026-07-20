@@ -1,26 +1,91 @@
 ---
-title: Untitled
-format:
-  awesomecv-html: 
-    vitae: true
-author: Mitchell O'Hara-Wild
-date: last-modified
+name: Marie
+surname: Curie
+position: "Physicist and Chemist"
+address: "Paris, France"
+email: "marie.curie@example.org"
+github: mcurie
+# Uncomment to add more to the header:
+# phone: "+33 1 23 45 67 89"
+# www: "example.org"
+# orcid: 0000-0000-0000-0000
+# linkedin: mcurie
+# aboutme: "A short line under the header."
+# profilepic: "profile.png"
+# headcolor: "8C1E1E"
+format: awesomecv-pdf
 ---
 
-## Introduction
+# Education
 
-*TODO* Create an example file that demonstrates the formatting and features of your format.
+Each row of the table is one entry, and each column is a field on it. Columns
+keep their own heading, so `fields` is only needed where that heading is not the
+one the style expects. It is written `new: old`, like `dplyr::rename()`.
 
-## More Information
+::: {.entries style="detailed" fields="{what: Degree, with: Institution, when: Years, where: Location}"}
+| Degree             | Institution         | Years     | Location      |
+|--------------------|---------------------|-----------|---------------|
+| Ph.D. in Physics   | University of Paris | 1891-1895 | Paris, France |
+| M.Sc. in Chemistry | University of Paris | 1889-1891 | Paris, France |
+:::
 
-You can learn more about controlling the appearance of PDF output here: <https://quarto.org/docs/output-formats/pdf-basics.html>
+# Employment
 
+A grid table can hold a bullet list in a cell, so `why` carries several points
+per entry. Here the headings already match, and no `fields` is needed.
 
-| Degree             | Institution                | Years      | Location       |
-|--------------------|---------------------------|------------|-----------------|
-| B.Sc. in Biology   | State University          | 2018–2022  | Anytown, USA    |
-| M.Sc. in Chemistry | City College              | 2022–2024  | Somewhere, USA  |
-| Ph.D. in Physics   | Research Institute        | 2024–2028  | Elsewhere, USA  |
+::: {.entries style="detailed"}
++------------+---------------------+-----------+------------------------------+
+| what       | with                | when      | why                          |
++============+=====================+===========+==============================+
+| Professor  | University of Paris | 1906-1934 | - First woman to hold the    |
+|            |                     |           |   chair of General Physics   |
+|            |                     |           | - Directed the Curie         |
+|            |                     |           |   Laboratory                 |
++------------+---------------------+-----------+------------------------------+
+| Researcher | EPCI                | 1897-1906 | - Isolated polonium and      |
+|            |                     |           |   radium                     |
++------------+---------------------+-----------+------------------------------+
+:::
 
+# Awards
 
+The `brief` style is a single line per entry, for lists that need no
+elaboration.
 
+::: {.entries style="brief"}
+| what                     | where           | when |
+|--------------------------|-----------------|------|
+| Nobel Prize in Chemistry | Swedish Academy | 1911 |
+| Davy Medal               | Royal Society   | 1903 |
+| Nobel Prize in Physics   | Swedish Academy | 1903 |
+:::
+
+# Service
+
+Markdown inside cells is preserved, and LaTeX special characters are escaped
+for you, so **bold** text and a literal 100% both come out right.
+
+::: {.entries style="brief"}
+| what                                 | where    | when |
+|--------------------------------------|----------|------|
+| Member, **Solvay Council**           | Brussels | 1911 |
+| Director, Red Cross Radiology (100%) | Paris    | 1914 |
+:::
+
+# Skills
+
+The `skills` style pairs a category with its members, written either as one
+string in `with` or as a list in `why`.
+
+::: {.entries style="skills"}
++------------+-------------------------------------+
+| what       | why                                 |
++============+=====================================+
+| Techniques | - Fractional crystallisation        |
+|            | - Piezoelectric quartz electrometry |
+|            | - Radiometric measurement           |
++------------+-------------------------------------+
+| Languages  | - Polish, French, Russian           |
++------------+-------------------------------------+
+:::
