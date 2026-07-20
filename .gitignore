@@ -6,9 +6,8 @@
 /template.pdf
 /template.tex
 
-# `format-resources` copies the Awesome CV support files next to the rendered
+# `format-resources` copies the Awesome CV class file next to the rendered
 # document, which for this repository is the project root.
 /awesome-cv.cls
-/fonts/
 
 /.luarc.json

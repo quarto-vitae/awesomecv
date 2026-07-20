@@ -22,7 +22,6 @@ contributes:
       # The filter reads _extensions/**/entries/ directly.
       format-resources:
         - awesome-cv.cls
-        - fonts
       # Default knitr engine printing data directly as a markdown table.
       df-print: kable
       # Provided by the embedded copy of quarto-vitae/curriculum, under
