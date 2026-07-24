@@ -10,6 +10,7 @@
 --- authors, not names implemented here.
 
 local options = require("options")
+local bibliography = require("bibliography")
 
 --- The pandoc format, and template extension, to render entries into.
 ---
@@ -211,11 +212,14 @@ end
 --- Locate the template for a style, in the documented resolution order.
 ---
 --- Step 3 reads extension sources directly. `format-resources` is copied only
---- after pandoc runs, so a template staged that way resolves on the second
---- render onwards: it works locally and fails in CI.
+--- after pandoc runs, so a template resolved that way works on every render
+--- except the first: silently correct locally, silently broken in CI.
+---
+--- `no_generic` opts out of step 4, for styles with a better fallback than the
+--- generic layout — bibliographies fall back to citeproc's own output.
 ---
 --- @return string|nil source, string|nil path, boolean generic
-local function find_template(style, ext, meta)
+local function find_template(style, ext, meta, no_generic)
   local filename = style .. "." .. ext
 
   -- 1. Document metadata override.
@@ -249,6 +253,8 @@ local function find_template(style, ext, meta)
       table.concat(found, ", ") .. "); using the first")
   end
   if found[1] then return sources[1], found[1], false end
+
+  if no_generic then return nil, nil, false end
 
   -- 4. This extension's generic fallback for the target format.
   local generic = quarto.utils.resolve_path("entries/generic." .. ext)
@@ -380,11 +386,152 @@ local function warn_no_table(el, config)
   end
 end
 
+--- Decide where a bibliography carrier's citation data comes from.
+---
+--- `file=` wins, and the filter never opens it: the path goes to the scoped
+--- citeproc run as `bibliography:` metadata, so every format citeproc accepts
+--- works by construction. Otherwise payloads (fenced blocks or printed
+--- output) are read into CSL items, an explicit `format:` overriding the
+--- fence class, which overrides sniffing.
+---
+--- Returns nil once it has warned, so the caller does not warn again.
+--- @return table|nil source { bibliography = path } or { references = items }
+local function bibliography_source(el, config)
+  local payloads = options.find_payloads(el.content)
+
+  if config.file then
+    if #payloads > 0 then
+      quarto.log.warning(
+        "vitae: bibliography carrier has both `file` and an inline payload; " ..
+        "using `file` (" .. tostring(config.file) .. ")")
+    end
+    local path = bibliography.resolve_file(tostring(config.file))
+    local handle = io.open(path, "r")
+    if not handle then
+      quarto.log.warning(
+        "vitae: bibliography file not found: " .. tostring(config.file) ..
+        " (resolved to " .. path .. "; paths are relative to the document)")
+      return nil
+    end
+    handle:close()
+    return { bibliography = path }
+  end
+
+  if #payloads == 0 then
+    local where = el.attr.identifier ~= "" and ("#" .. el.attr.identifier)
+      or (el.attr.classes:includes("cell") and "code cell" or ".entries div")
+    quarto.log.warning(
+      "vitae: bibliography carrier (" .. where .. ") has neither `file` nor " ..
+      "a payload, so no entries were rendered. Supply file=, a fenced " ..
+      "bibtex/yaml/json block, or print citation data from the cell")
+    return nil
+  end
+
+  local override = bibliography.normalise_format(config.format)
+  local references = pandoc.List({})
+  for _, payload in ipairs(payloads) do
+    local items = bibliography.to_references(payload.text, override or payload.format)
+    if items then references:extend(items) end
+  end
+  if #references == 0 then return nil end
+  return { references = references }
+end
+
+--- Turn citeproc's refs div content into ordinary entries.
+---
+--- Each `.csl-entry` becomes one entry with a small role set: `entry` (the
+--- rendered reference, written to the target format so escaping matches
+--- `read_cell`), `id` (citation key, citeproc's `ref-` prefix stripped) and
+--- `type` (CSL type, recovered via pandoc.utils.references). No CSL knowledge
+--- reaches the template.
+local function bibliography_entries(ref_blocks, items, format)
+  local types = {}
+  for _, item in ipairs(items) do
+    types[tostring(item.id)] = item.type and tostring(item.type) or nil
+  end
+
+  local entries = {}
+  for _, block in ipairs(ref_blocks) do
+    if block.t == "Div" and block.classes:includes("csl-entry") then
+      local id = block.identifier:gsub("^ref%-", "")
+      -- Citeproc wraps each entry in a single Para; unwrapping it keeps the
+      -- rendered value inline (no <p> in HTML), as read_cell does for cells.
+      local content = block.content
+      if #content == 1 and content[1].t == "Para" then
+        content = pandoc.Blocks({ pandoc.Plain(content[1].content) })
+      end
+      entries[#entries + 1] = {
+        entry = options.trim(pandoc.write(pandoc.Pandoc(content), format)),
+        id = id,
+        type = types[id],
+      }
+    end
+  end
+  return entries
+end
+
+--- Warn when the format declares the bibliography style but ships no template.
+---
+--- The passthrough is legitimate for a format with no opinion about
+--- publication markup, but hides a packaging bug when the extension claims the
+--- style. Mirrors warn_generic_fallback, with the passthrough as the fallback.
+local function warn_bibliography_fallback(ext, meta)
+  local declared = meta.vitae and meta.vitae.styles
+  if not declared then return end
+  for _, item in ipairs(declared) do
+    if pandoc.utils.stringify(item) == "bibliography" then
+      quarto.log.warning(
+        "vitae: this format declares style 'bibliography' but no bibliography." ..
+        ext .. " template was found; passing citeproc's output through")
+      return
+    end
+  end
+end
+
+--- Process a bibliography carrier: scoped citeproc run, then the template
+--- layer, with citeproc's own output as the fallback rather than the generic
+--- template — the five-slot generic must never render citations.
+local function process_bibliography(el, config, meta)
+  local source = bibliography_source(el, config)
+  if not source then return nil end
+
+  local ref_blocks, refs_div, items = bibliography.scoped_citeproc(source, meta)
+  if not ref_blocks then return nil end
+
+  local format, ext = target_format()
+  local template_source, path = find_template("bibliography", ext, meta, true)
+  if not template_source then
+    warn_bibliography_fallback(ext, meta)
+    -- Passthrough of citeproc's own output. Its fixed `refs` id would recur
+    -- across carriers and collide with a document-level bibliography, so the
+    -- carrier's own identifier replaces it.
+    refs_div.attr.identifier = el.attr.identifier
+    return pandoc.Blocks({ refs_div })
+  end
+
+  local entries = bibliography_entries(ref_blocks, items, format)
+  local template = pandoc.template.compile(template_source, pandoc.path.directory(path))
+  local rendered = pandoc.layout.render(
+    pandoc.template.apply(template, { entries = entries, style = "bibliography" }))
+
+  if config.as == "markdown" then
+    return pandoc.read(rendered, "markdown").blocks
+  end
+  return pandoc.Blocks({ pandoc.RawBlock(format, rendered) })
+end
+
 --- Process any attribute carrier: a `.entries` div, or a code cell whose
 --- options carry vitae configuration.
 local function process_div(el, meta)
   local config = options.read(el.attr)
   if not config then return nil end
+
+  -- The one special case in the style system: the carrier's data is citation
+  -- data, not records. The style decides the interpretation, never the file
+  -- extension. The table path below is untouched.
+  if config.style == "bibliography" then
+    return process_bibliography(el, config, meta)
+  end
 
   local format = target_format()
 

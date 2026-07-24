@@ -24,7 +24,7 @@ local M = {}
 --- something. `file` qualifies: it is read to report that it is not implemented.
 local BARE_KEYS = {
   style = true, fields = true, as = true, file = true,
-  collapse = true, input = true,
+  collapse = true, input = true, format = true,
 }
 
 local function is_json_object(str)
@@ -237,23 +237,53 @@ function M.find_tables(blocks)
   return tables
 end
 
---- Find the text of a container's printed output, at any depth. Used by the
---- `input:` path.
+--- Fence classes that declare a payload format, normalised to the names
+--- `bibliography.lua` understands. Chosen to be what an author writes for
+--- syntax highlighting anyway.
+local PAYLOAD_FORMATS = {
+  bibtex = "bibtex", biblatex = "bibtex",
+  json = "csljson", yaml = "cslyaml",
+}
+
+--- Find the payloads carried by a container, at any depth: fenced blocks in a
+--- div body, or printed cell output.
 ---
 --- The engines label printed output differently: knitr tags stdout
 --- `.cell-output-stdout`, while a jupyter result is an unclassed CodeBlock. So
---- anything that is not the echoed *source* counts as output.
+--- anything that is not the echoed *source* counts as a payload.
+---
+--- A fence class naming a known format declares it; `format` is nil otherwise,
+--- and the caller sniffs.
+--- @param blocks pandoc.Blocks
+--- @return table payloads list of { text, format }
+function M.find_payloads(blocks)
+  local payloads = {}
+  pandoc.walk_block(pandoc.Div(blocks), {
+    CodeBlock = function(cb)
+      if not cb.classes:includes("cell-code") then
+        local format = nil
+        for _, class in ipairs(cb.classes) do
+          if PAYLOAD_FORMATS[class] then
+            format = PAYLOAD_FORMATS[class]
+            break
+          end
+        end
+        payloads[#payloads + 1] = { text = cb.text, format = format }
+      end
+    end
+  })
+  return payloads
+end
+
+--- Find the text of a container's printed output, at any depth. Used by the
+--- `input:` path, which brings its own reader and so ignores fence classes.
 --- @param blocks pandoc.Blocks
 --- @return table texts
 function M.find_outputs(blocks)
   local texts = {}
-  pandoc.walk_block(pandoc.Div(blocks), {
-    CodeBlock = function(cb)
-      if not cb.classes:includes("cell-code") then
-        texts[#texts + 1] = cb.text
-      end
-    end
-  })
+  for _, payload in ipairs(M.find_payloads(blocks)) do
+    texts[#texts + 1] = payload.text
+  end
   return texts
 end
 
