@@ -2,9 +2,10 @@
 name: Marie
 surname: Curie
 position: "Physicist and Chemist"
-address: "Paris, France"
-email: "marie.curie@example.org"
-github: mcurie
+social:
+  - address: "Paris, France"
+  - email: marie.curie@example.org
+  - github: mcurie
 recipient-name: "Prof. Gabriel Lippmann"
 recipient-address:
   - "Faculty of Sciences"

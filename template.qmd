@@ -2,14 +2,21 @@
 name: Marie
 surname: Curie
 position: "Physicist and Chemist"
-address: "Paris, France"
-email: "marie.curie@example.org"
-github: mcurie
-# Uncomment to add more to the header:
-# phone: "+33 1 23 45 67 89"
-# www: "example.org"
-# orcid: 0000-0000-0000-0000
-# linkedin: mcurie
+# Contact details, shown in the order given. Each is `service: handle`, written
+# the way that service writes it; `custom` holds anything else.
+social:
+  - address: "Paris, France"
+  - email: marie.curie@example.org
+  - github: mcurie
+  # Uncomment to add more to the header:
+  # - phone: "+33 1 23 45 67 89"
+  # - website: example.org
+  # - orcid: 0000-0000-0000-0000
+  # - linkedin: mcurie
+  # - mastodon: "@mcurie@fosstodon.org"
+  # - custom:
+  #     - icon: flask
+  #       text: "[Curie Laboratory](https://example.org/lab)"
 # aboutme: "A short line under the header."
 # profilepic: "profile.png"
 # headcolor: "8C1E1E"

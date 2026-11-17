@@ -38,9 +38,10 @@ Set the format and describe yourself in the YAML header:
 name: Marie
 surname: Curie
 position: "Physicist and Chemist"
-address: "Paris, France"
-email: "marie.curie@example.org"
-github: mcurie
+social:
+  - address: "Paris, France"
+  - email: marie.curie@example.org
+  - github: mcurie
 format: awesomecv-pdf
 ---
 ```
@@ -120,26 +121,48 @@ Set these in the YAML header. All are optional except `name`.
 |--------|--------|
 | `name`, `surname` | The name shown in the header |
 | `position` | A line of roles under the name |
-| `address` | Postal address |
+| `social` | Address and contact details, [below](#contact-details) |
 | `pronouns` | Displayed beside the contact details |
-| `phone`, `email`, `www` | Contact details |
-| `whatsapp`, `telegram`, `skype` | Messaging profiles |
 | `dateofbirth` | Date of birth |
-| `orcid`, `googlescholar`, `researchgate` | Academic profiles |
-| `github`, `gitlab`, `bitbucket`, `stackoverflow` | Code profiles |
-| `linkedin`, `twitter`, `x`, `mastodon`, `xing` | Social profiles |
-| `reddit`, `medium`, `kaggle`, `hackerrank` | Further profiles |
 | `extrainfo` | Free text appended to the contact line |
 | `aboutme` | A quoted line beneath the header |
 | `profilepic` | Path to a profile image |
 | `profilepic-options` | How the photo is drawn, from `circle`/`rectangle`, `edge`/`noedge` and `left`/`right` |
 
-Most take a single value, such as `github: mcurie`. Two take a pair:
+### Contact details
+
+The address and contact line come from `social`, a list shown in the order you
+write it. Each item is `service: handle`, written the way that service writes
+it, and a full profile URL works in place of any handle:
 
 ```yaml
-mastodon: {instance: fosstodon.org, name: mcurie}
-stackoverflow: {id: "123456", name: "marie-curie"}
+social:
+  - address: "Paris, France"
+  - phone: "+33 1 23 45 67 89"
+  - email: marie.curie@example.org
+  - website: example.org
+  - orcid: 0000-0002-1825-0097
+  - github: mcurie
+  - mastodon: "@mcurie@fosstodon.org"
+  - stackoverflow: 123456/marie-curie
+  - linkedin: {handle: mcurie, label: "Marie Curie"}
+  - custom:
+      - icon: flask
+        text: "[Curie Laboratory](https://example.org/lab)"
 ```
+
+The services are `address`, `phone`, `email`, `website`, `whatsapp`,
+`telegram`, `skype`, `orcid`, `googlescholar`, `researchgate`, `github`,
+`gitlab`, `bitbucket`, `stackoverflow`, `kaggle`, `hackerrank`, `linkedin`,
+`mastodon`, `bluesky`, `x`, `twitter`, `xing`, `reddit` and `medium`. Giving
+a map instead of a handle, as for `linkedin` above, overrides any of `handle`,
+`url`, `label`, `icon` or `title`. Anything else goes under `custom`, as an
+`icon` and markdown `text`, with an optional `url`. Icons are named as in
+[Font Awesome 6](https://fontawesome.com/search?ic=free).
+
+`social` is shared by every vitae template, through
+[curriculum](https://github.com/quarto-vitae/curriculum), so the same list
+works unchanged if you switch designs.
 
 ### Appearance
 
@@ -190,7 +213,8 @@ and the surrounding matter in the header and the letter itself as prose:
 name: Marie
 surname: Curie
 position: "Physicist and Chemist"
-email: "marie.curie@example.org"
+social:
+  - email: marie.curie@example.org
 recipient-name: "Prof. Gabriel Lippmann"
 recipient-address:
   - "Faculty of Sciences"
