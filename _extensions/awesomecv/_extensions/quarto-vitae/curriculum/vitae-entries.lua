@@ -11,6 +11,7 @@
 
 local options = require("options")
 local bibliography = require("bibliography")
+local social = require("social")
 
 --- The pandoc format, and template extension, to render entries into.
 ---
@@ -569,7 +570,11 @@ end
 --- happens *before* `Pandoc`, leaving document metadata unavailable and silently
 --- disabling both the `vitae.templates` override and the `vitae.styles` warning.
 --- Walking from here keeps metadata in scope.
+---
+--- The `social` front matter is normalised here too, before the walk, so that
+--- templates receive the same contact fields from every vitae template.
 function Pandoc(doc)
+  doc.meta = social.normalise(doc.meta)
   return doc:walk({
     Div = function(el) return process_div(el, doc.meta) end
   })
