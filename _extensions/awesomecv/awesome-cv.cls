@@ -344,6 +344,18 @@
   \StrDel{\@wameuri}{)}[\@wameuri]%
 }
 
+% LOCAL: a contact item of any kind, already formatted, shown on the contact
+% line in the order given. The per-service commands around this one fix both
+% the order and the set of services; this is how the Quarto template places
+% each entry of the `social` front matter, custom ones included.
+% Usage: \cvsocial{<icon, label and link>}
+\newcommand*{\@cvsocials}{}
+\newcommand{\cvsocial}[1]{\g@addto@macro\@cvsocials{\acvSocialItem{#1}}}
+% Called from inside \makecvheader, where the isstart flag is in scope.
+\newcommand{\acvSocialItem}[1]{%
+  \ifbool{isstart}{\setbool{isstart}{false}}{\acvHeaderSocialSep}#1%
+}
+
 % Defines writer's email (optional)
 % Usage: \email{<email address>}
 \newcommand*{\email}[1]{\def\@email{#1}}
@@ -573,6 +585,8 @@
           \faAlt{Pronouns: \@pronouns}{\faComment}{\@pronouns}%
           \setbool{isstart}{false}%
         }%
+      % LOCAL: items given with \cvsocial, in the order they were given.
+      \@cvsocials%
       \ifthenelse{\isundefined{\@mobile}}%
         {}%
         {%

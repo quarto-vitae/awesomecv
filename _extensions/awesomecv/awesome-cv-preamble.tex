@@ -67,89 +67,32 @@ $endif$
 $if(position)$
 \position{$position$}
 $endif$
-$if(address)$
-\address{$address$}
-$endif$
-
 $if(pronouns)$
 \pronouns{$pronouns$}
-$endif$
-$if(phone)$
-\mobile{$phone$}
-$endif$
-$if(email)$
-\email{$email$}
-$endif$
-$if(www)$
-\homepage{$www$}
 $endif$
 $if(dateofbirth)$
 \dateofbirth{$dateofbirth$}
 $endif$
-$if(orcid)$
-\orcid{$orcid$}
+$-- Contact details come from the `social` front matter, which the embedded
+$-- curriculum filter has already normalised: every item has the same fields
+$-- (service, is, title, icon, url, label, handle, given), in the order the
+$-- author wrote them. The address is a line of its own in Awesome-CV, so it is
+$-- taken out of the loop; everything else goes on the contact line through
+$-- \cvsocial, which inserts the separators.
+$--
+$-- Icons are curriculum's Font Awesome defaults, except where upstream
+$-- Awesome-CV draws a different one (the square GitHub, WhatsApp and XING
+$-- marks, a mobile phone and a house). `given.icon` lets an icon the author
+$-- chose win over those.
+$for(social)$
+$if(social.is.address)$
+\address{$social.label$}
+$elseif(social.is.custom)$
+\cvsocial{$if(social.url)$\href{$social.url$}{$endif$\mbox{$if(social.icon)$\faIcon{$social.icon$}\acvHeaderIconSep{}$endif$$social.label$}$if(social.url)$}$endif$}
+$else$
+\cvsocial{$if(social.url)$\href{$social.url$}{$endif$\faAlt{$social.title$: $social.handle$}{$if(social.given.icon)$\faIcon{$social.icon$}$elseif(social.is.github)$\faSquareGithub$elseif(social.is.phone)$\faMobile$elseif(social.is.website)$\faHouseChimney$elseif(social.is.whatsapp)$\faSquareWhatsapp$elseif(social.is.xing)$\faSquareXing$else$\faIcon{$social.icon$}$endif$}{$social.label$}$if(social.url)$}$endif$}
 $endif$
-$if(publons)$
-\publons{$publons$}
-$endif$
-$-- \googlescholar takes the profile id and the name to display beside it.
-$-- An empty second argument makes the class fall back to the author's name.
-$if(googlescholar)$
-\googlescholar{$googlescholar$}{$if(googlescholar-name)$$googlescholar-name$$endif$}
-$endif$
-$if(researchgate)$
-\researchgate{$researchgate$}
-$endif$
-$if(github)$
-\github{$github$}
-$endif$
-$if(gitlab)$
-\gitlab{$gitlab$}
-$endif$
-$if(bitbucket)$
-\bitbucket{$bitbucket$}
-$endif$
-$if(stackoverflow)$
-\stackoverflow{$stackoverflow.id$}{$stackoverflow.name$}
-$endif$
-$if(linkedin)$
-\linkedin{$linkedin$}
-$endif$
-$if(twitter)$
-\twitter{$twitter$}
-$endif$
-$if(x)$
-\x{$x$}
-$endif$
-$-- \mastodon takes the instance host and the handle separately, so this is
-$-- given as `mastodon: {instance: fosstodon.org, name: user}`.
-$if(mastodon)$
-\mastodon{$mastodon.instance$}{$mastodon.name$}
-$endif$
-$if(skype)$
-\skype{$skype$}
-$endif$
-$if(reddit)$
-\reddit{$reddit$}
-$endif$
-$if(xing)$
-\xing{$xing$}
-$endif$
-$if(medium)$
-\medium{$medium$}
-$endif$
-$if(kaggle)$
-\kaggle{$kaggle$}
-$endif$
-$if(hackerrank)$
-\hackerrank{$hackerrank$}
-$endif$
-$if(telegram)$
-\telegram{$telegram$}
-$endif$
-$if(whatsapp)$
-\whatsapp{$whatsapp$}
-$endif$
+$endfor$
 $if(extrainfo)$
 \extrainfo{$extrainfo$}
 $endif$
